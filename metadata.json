@@ -1,0 +1,7 @@
+{
+  "name": "Banana Pro Vision",
+  "description": "A premium AI image generation and editing suite powered by Gemini Nano Banana Pro, featuring text-to-image, inpainting, and high-resolution output.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
