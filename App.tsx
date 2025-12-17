@@ -313,18 +313,41 @@ const App: React.FC = () => {
         {/* Central Display */}
         <div className="flex-1 overflow-auto p-4 md:p-6 flex items-center justify-center custom-scrollbar relative">
           {loading && (
-            <div className="text-center space-y-12 max-w-md animate-in fade-in duration-700">
-              <div className="relative w-40 h-40 mx-auto">
-                <div className="absolute inset-0 border-[6px] border-gold/10 rounded-full"></div>
-                <div className="absolute inset-0 border-[6px] border-gold border-t-transparent rounded-full animate-spin"></div>
-                <div className="absolute inset-6 bg-gold/5 rounded-full flex items-center justify-center overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-gold/20 to-transparent animate-pulse"></div>
-                  <i className="fas fa-atom text-5xl text-gold animate-bounce"></i>
+            <div className="text-center space-y-10 max-w-md animate-in fade-in duration-700">
+              <div className="relative w-44 h-44 mx-auto">
+                {/* Outer glow ring */}
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-gold/20 via-gold-warm/10 to-gold/20 blur-xl animate-pulse"></div>
+                {/* Spinning border */}
+                <div className="absolute inset-0 border-[4px] border-gold/20 rounded-full"></div>
+                <div className="absolute inset-0 border-[4px] border-transparent border-t-gold border-r-gold/50 rounded-full animate-spin" style={{ animationDuration: '2s' }}></div>
+                {/* Inner circle with banana */}
+                <div className="absolute inset-3 bg-gradient-to-br from-base-charcoal to-base-dark rounded-full flex items-center justify-center overflow-hidden shadow-2xl">
+                  <div className="absolute inset-0 bg-gradient-to-t from-gold/10 to-transparent"></div>
+                  {/* Banana emoji with animations */}
+                  <div className="relative">
+                    <span 
+                      className="text-7xl select-none"
+                      style={{
+                        animation: 'bananaFloat 3s ease-in-out infinite, bananaRotate 4s ease-in-out infinite',
+                        display: 'inline-block',
+                        filter: 'drop-shadow(0 0 20px rgba(245, 184, 0, 0.5))'
+                      }}
+                    >
+                      🍌
+                    </span>
+                  </div>
+                </div>
+                {/* Orbiting particles */}
+                <div className="absolute inset-0 animate-spin" style={{ animationDuration: '8s' }}>
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-gold rounded-full shadow-[0_0_10px_rgba(245,184,0,0.8)]"></div>
+                </div>
+                <div className="absolute inset-0 animate-spin" style={{ animationDuration: '6s', animationDirection: 'reverse' }}>
+                  <div className="absolute bottom-2 right-2 w-1.5 h-1.5 bg-gold-warm rounded-full shadow-[0_0_8px_rgba(255,170,0,0.8)]"></div>
                 </div>
               </div>
-              <div className="space-y-4">
-                <h3 className="text-3xl font-display font-bold tracking-tight">Generating...</h3>
-                <p className="text-gold/60 italic text-xl font-sans">{loadingMsg}</p>
+              <div className="space-y-3">
+                <h3 className="text-3xl font-display font-bold tracking-tight bg-gradient-to-r from-white via-gold-marigold to-white bg-clip-text text-transparent">Generating...</h3>
+                <p className="text-gold/60 italic text-lg font-sans">{loadingMsg}</p>
               </div>
             </div>
           )}

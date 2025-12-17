@@ -109,6 +109,30 @@
         to { transform: rotate(0deg); }
       }
 
+      @keyframes bananaFloat {
+        0%, 100% { 
+          transform: translateY(0) scale(1); 
+        }
+        50% { 
+          transform: translateY(-8px) scale(1.05); 
+        }
+      }
+
+      @keyframes bananaRotate {
+        0%, 100% { 
+          transform: rotate(-10deg); 
+        }
+        25% { 
+          transform: rotate(5deg); 
+        }
+        50% { 
+          transform: rotate(-5deg); 
+        }
+        75% { 
+          transform: rotate(10deg); 
+        }
+      }
+
       .skeleton {
         background: linear-gradient(
           90deg,
