@@ -190,6 +190,7 @@ const App: React.FC = () => {
         setVideoHistory(prev => [newVideoHistoryItem, ...prev]);
         
       } catch (err: any) {
+        console.error("Video generation error:", err);
         if (err.message?.includes("429") || err.message?.includes("RESOURCE_EXHAUSTED") || err.message?.includes("quota")) {
           setIsRateLimited(true);
         } else {
