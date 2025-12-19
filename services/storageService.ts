@@ -1,10 +1,12 @@
 
-import { HistoryItem } from '../types';
+import { HistoryItem, VideoHistoryItem } from '../types';
 
 const DB_NAME = 'BananaProDB';
 const STORE_NAME = 'history';
-const DB_VERSION = 1;
+const VIDEO_STORE_NAME = 'videoHistory';
+const DB_VERSION = 2;
 const MAX_HISTORY_ITEMS = 100;
+const MAX_VIDEO_HISTORY_ITEMS = 50;
 
 export class StorageService {
   private static db: IDBDatabase | null = null;
@@ -19,6 +21,9 @@ export class StorageService {
         const db = (event.target as IDBOpenDBRequest).result;
         if (!db.objectStoreNames.contains(STORE_NAME)) {
           db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+        }
+        if (!db.objectStoreNames.contains(VIDEO_STORE_NAME)) {
+          db.createObjectStore(VIDEO_STORE_NAME, { keyPath: 'id' });
         }
       };
 
@@ -98,6 +103,74 @@ export class StorageService {
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(STORE_NAME, 'readwrite');
       const store = transaction.objectStore(STORE_NAME);
+      const request = store.clear();
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  // ==================== VIDEO HISTORY ====================
+
+  static async getAllVideoHistory(): Promise<VideoHistoryItem[]> {
+    const db = await this.getDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(VIDEO_STORE_NAME, 'readonly');
+      const store = transaction.objectStore(VIDEO_STORE_NAME);
+      const request = store.getAll();
+
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  static async saveVideoHistoryItem(item: VideoHistoryItem): Promise<void> {
+    const db = await this.getDB();
+    
+    await new Promise<void>((resolve, reject) => {
+      const transaction = db.transaction(VIDEO_STORE_NAME, 'readwrite');
+      const store = transaction.objectStore(VIDEO_STORE_NAME);
+      const request = store.put(item);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+
+    await this.enforceVideoHistoryLimit();
+  }
+
+  private static async enforceVideoHistoryLimit(): Promise<void> {
+    const allItems = await this.getAllVideoHistory();
+    
+    if (allItems.length <= MAX_VIDEO_HISTORY_ITEMS) return;
+
+    allItems.sort((a, b) => b.timestamp - a.timestamp);
+    const itemsToDelete = allItems.slice(MAX_VIDEO_HISTORY_ITEMS);
+
+    for (const item of itemsToDelete) {
+      await this.deleteVideoHistoryItem(item.id);
+    }
+    
+    console.log(`Cleaned up ${itemsToDelete.length} old video history items. Keeping ${MAX_VIDEO_HISTORY_ITEMS} most recent.`);
+  }
+
+  static async deleteVideoHistoryItem(id: string): Promise<void> {
+    const db = await this.getDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(VIDEO_STORE_NAME, 'readwrite');
+      const store = transaction.objectStore(VIDEO_STORE_NAME);
+      const request = store.delete(id);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  static async clearAllVideoHistory(): Promise<void> {
+    const db = await this.getDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(VIDEO_STORE_NAME, 'readwrite');
+      const store = transaction.objectStore(VIDEO_STORE_NAME);
       const request = store.clear();
 
       request.onsuccess = () => resolve();
