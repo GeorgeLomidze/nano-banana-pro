@@ -94,7 +94,7 @@ export class GeminiService {
     const generateConfig: any = {
       aspectRatio: config.aspectRatio,
       numberOfVideos: 1,
-      durationSeconds: config.generationSpeed === 'fast' ? 4 : 8,
+      durationSeconds: 8,
     };
 
     let operation;
