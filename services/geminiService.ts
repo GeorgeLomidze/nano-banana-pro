@@ -121,6 +121,15 @@ export class GeminiService {
       });
     }
 
+    // Check for content filtering first
+    if (operation.response?.raiMediaFilteredCount && operation.response.raiMediaFilteredCount > 0) {
+      const reasons = operation.response.raiMediaFilteredReasons;
+      if (reasons && reasons.length > 0) {
+        throw new Error(reasons[0]);
+      }
+      throw new Error("Video was blocked by content safety filters. Please try a different prompt or image.");
+    }
+
     // Get the video
     if (operation.response?.generatedVideos && operation.response.generatedVideos.length > 0) {
       const video = operation.response.generatedVideos[0];
